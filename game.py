@@ -96,3 +96,88 @@ def buttonHit(x, y):
                 return buttons[i][5]
     return None
 
+
+def end(winner=False):
+    global limbs
+    lostTxt = 'You Lost, press any key to play again...'
+    winTxt = 'WINNER!, press any key to play again...'
+    redraw_game_window()
+    pygame.time.delay(1000)
+    window.fill(GREEN)
+
+    if winner == True:
+        label = lost_font.render(winTxt, 1, BLACK)
+    else:
+        label = lost_font.render(lostTxt, 1, BLACK)
+
+    wordTxt = lost_font.render(word.upper(), 1, BLACK)
+    wordWas = lost_font.render('The phrase was: ', 1, BLACK)
+
+    window.blit(wordTxt, (windowWidth/2 - wordTxt.get_width()/2, 295))
+    window.blit(wordWas, (windowWidth/2 - wordWas.get_width()/2, 245))
+    window.blit(label, (windowWidth / 2 - label.get_width() / 2, 140))
+    pygame.display.update()
+    again = True
+    while again:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if event.type == pygame.KEYDOWN:
+                again = False
+    reset()
+
+
+def reset():
+    global limbs
+    global guessed
+    global buttons
+    global word
+    for i in range(len(buttons)):
+        buttons[i][4] = True
+
+    limbs = 0
+    guessed = []
+    word = randomWord()
+    
+# Button setup
+increase = round(windowWidth / 13)
+for i in range(26):
+    if i < 13:
+        y = 40
+        x = 25 + (increase * i)
+    else:
+        x = 25 + (increase * (i - 13))
+        y = 85
+    buttons.append([LIGHT_BLUE, x, y, 20, True, 65 + i])
+    # buttons.append([color, x_pos, y_pos, radius, visible, char])
+
+word = randomWord()
+inPlay = True
+
+while inPlay:
+    redraw_game_window()
+    pygame.time.delay(10)
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            inPlay = False
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                inPlay = False
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            clickPos = pygame.mouse.get_pos()
+            letter = buttonHit(clickPos[0], clickPos[1])
+            if letter != None:
+                guessed.append(chr(letter))
+                buttons[letter - 65][4] = False
+                if hang(chr(letter)):
+                    if limbs != 5:
+                        limbs += 1
+                    else:
+                        end()
+                else:
+                    print(spacedOut(word, guessed))
+                    if spacedOut(word, guessed).count('_') == 0:
+                        end(True)
+
+pygame.quit()
