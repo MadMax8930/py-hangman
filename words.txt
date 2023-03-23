@@ -8,4 +8,4 @@ that was easy
 hangman is cool
 zoologist
 quadruplets
-the sky is blue
+---------------
