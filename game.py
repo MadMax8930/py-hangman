@@ -57,6 +57,23 @@ def redraw_game_window():
     window.blit(pic, (windowWidth/2 - pic.get_width()/2 + 20, 150))
     pygame.display.update()
 
+
+def randomWord():
+    file = open('words.txt')
+    f = file.readlines()
+    i = random.randrange(0, len(f) - 1)
+
+    return f[i][:-1]
+
+
+def hang(guess):
+    global word
+    if guess.lower() not in word.lower():
+        return True
+    else:
+        return False
+
+
 def spacedOut(word, guessed=[]):
     spacedWord = ''
     guessedLetters = guessed
@@ -71,3 +88,11 @@ def spacedOut(word, guessed=[]):
             spacedWord += ' '
     return spacedWord
             
+
+def buttonHit(x, y):
+    for i in range(len(buttons)):
+        if x < buttons[i][1] + 20 and x > buttons[i][1] - 20:
+            if y < buttons[i][2] + 20 and y > buttons[i][2] - 20:
+                return buttons[i][5]
+    return None
+
